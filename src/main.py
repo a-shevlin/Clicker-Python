@@ -13,9 +13,15 @@ def button_click():
 
 button.on_click = button_click
 
-e_fryer = Button(cost=10, x=.2, scale=.124, color=color.dark_gray, disabled=True)
+e_fryer = Button(cost=10, x=.2, scale=.124, color=color.gray, disabled=True)
 e_fryer.text = str(e_fryer.cost)
 e_fryer.tooltip = Tooltip(f'<doughnuts>Electric fryer\n <default>Generates 1 doughnut every 4 seconds!')
+
+
+mw_emp = Button(cost=50, y=-.15, x=.2, scale=.124, color=color.gray, disabled=True)
+mw_emp.text = str(mw_emp.cost)
+mw_emp.tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut every 2 seconds!')
+
 
 def buy_fryer1():
 	global doughnut
@@ -36,6 +42,26 @@ def auto_generate_fryer1(value=1, interval=4):
 	e_fryer.animate_scale(.124, delay=.2)
 	invoke(auto_generate_fryer1, value, delay=interval)
 
+def buy_mw_emp():
+	global doughnut
+	if doughnut >= mw_emp.cost:
+		doughnut -= mw_emp.cost
+		mw_emp.cost += math.floor(mw_emp.cost/2)
+		counter.text = str(f'{doughnut} Doughnuts')
+		mw_emp.text = str(mw_emp.cost)
+		invoke(auto_generate_mw_emp, 1, 1)
+
+mw_emp.on_click = buy_mw_emp
+
+def auto_generate_mw_emp(value=1, interval=2):
+	global doughnut
+	doughnut += 1
+	counter.text = str(f'{doughnut} Doughnuts')
+	mw_emp.animate_scale(.125 * 1.1)
+	mw_emp.animate_scale(.124, delay=.2)
+	invoke(auto_generate_fryer1, value, delay=interval)
+
+
 def update():
 	global doughnut
 	for b in (e_fryer, ):
@@ -45,12 +71,12 @@ def update():
 		else:
 			b.disabled = True
 			b.color = color.gray
-	# for b in (mw_emp, ):
-	# 	if doughnut >= b.cost:
-	# 		b.disabled = False
-	# 		b.color = color.green
-	# 	else:
-	# 		b.disabled = True
-	# 		b.color = color.gray
+	for b in (mw_emp, ):
+		if doughnut >= b.cost:
+			b.disabled = False
+			b.color = color.green
+		else:
+			b.disabled = True
+			b.color = color.gray
 
 app.run()
