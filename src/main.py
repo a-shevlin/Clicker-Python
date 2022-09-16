@@ -4,7 +4,7 @@ app = Ursina(borderless=False)
 
 doughnut = 0
 counter = Text(text='0 Doughnuts',y=.25, z=-1, origin=(0, 0), background=True, )
-button = Button(text='doughnut click', color=color.brown, scale=.125)
+button = Button(text='doughnut', color=color.brown, scale=.125)
 
 def button_click():
 	global doughnut
@@ -14,6 +14,7 @@ def button_click():
 button.on_click = button_click
 
 e_fryer = Button(cost=10, x=.2, scale=.124, color=color.gray, disabled=True)
+e_fryer.texture = './assets/e_fryer.png'
 e_fryer.text = str(e_fryer.cost)
 e_fryer.tooltip = Tooltip(f'<doughnuts>Electric fryer\n <default>Generates 1 doughnut every 4 seconds!')
 
@@ -59,7 +60,7 @@ def auto_generate_mw_emp(value=1, interval=2):
 	counter.text = str(f'{doughnut} Doughnuts')
 	mw_emp.animate_scale(.125 * 1.1)
 	mw_emp.animate_scale(.124, delay=.2)
-	invoke(auto_generate_fryer1, value, delay=interval)
+	invoke(auto_generate_mw_emp, value, delay=interval)
 
 
 def update():
@@ -67,14 +68,14 @@ def update():
 	for b in (e_fryer, ):
 		if doughnut >= b.cost:
 			b.disabled = False
-			b.color = color.green
+			b.color = color.light_gray
 		else:
 			b.disabled = True
 			b.color = color.gray
 	for b in (mw_emp, ):
 		if doughnut >= b.cost:
 			b.disabled = False
-			b.color = color.green
+			b.color = color.light_gray
 		else:
 			b.disabled = True
 			b.color = color.gray
