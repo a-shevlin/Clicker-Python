@@ -2,4 +2,4 @@
 10 AM - 11 AM
 * python file structure and ursina implementation
 2 PM - 3 PM
-* draw button texture for fryers
+* draw button for e_fryers in ms paint
