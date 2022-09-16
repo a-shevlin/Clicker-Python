@@ -3,3 +3,5 @@
 * python file structure and ursina implementation
 2 PM - 3 PM
 * draw button for e_fryers in ms paint
+3 PM - 3:30 PM
+* draw button for mw_emp

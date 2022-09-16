@@ -4,7 +4,7 @@ app = Ursina(borderless=False)
 
 doughnut = 0
 counter = Text(text='0 Doughnuts',y=.25, z=-1, origin=(0, 0), background=True, )
-button = Button(text='doughnut', color=color.brown, scale=.125)
+button = Button(text='doughnut', scale=.125)
 
 def button_click():
 	global doughnut
@@ -20,6 +20,7 @@ e_fryer.tooltip = Tooltip(f'<doughnuts>Electric fryer\n <default>Generates 1 dou
 
 
 mw_emp = Button(cost=50, y=-.15, x=.2, scale=.124, color=color.gray, disabled=True)
+mw_emp.texture = './assets/mw_emp.png'
 mw_emp.text = str(mw_emp.cost)
 mw_emp.tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut every 2 seconds!')
 
