@@ -14,7 +14,7 @@ An application that allows a user to play an idle clicker game.
 A fullstack application using that allows a user to:  
 * open the game 
 * click and collect doughnuts
-* use doughnuts to buy buildings, upgrades, and tools to automate clicks
+* use doughnuts to buy buildings and upgrades to automate clicks
 
 This project use Ursina for layout and styling. 
 
