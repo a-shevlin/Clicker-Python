@@ -11,5 +11,8 @@
 
 ## Friday 9/23/22
 
-11 AM - 12 Am
+11 AM - 12 PM
 * research ursina menu functionality
+12 PM - 1 PM
+* research python business and ui logic separation
+* draw buttons for tree and pond
