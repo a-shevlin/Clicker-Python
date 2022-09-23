@@ -88,12 +88,12 @@ mw_emp.icon = './assets/mw_emp.png'
 mw_emp.text = str(mw_emp.cost)
 mw_emp.tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut every 2 seconds!')
 
-trees = Button(cost=50, y=-.15, x=.2, scale=.124, color=color.gray, disabled=True)
-trees.icon = './assets/trees.png'
+trees = Button(cost=100, y=-.15, x=.2, scale=.124, color=color.gray, disabled=True)
+trees.icon = './assets/d_tree.png'
 trees.text = str(trees.cost)
 trees.tooltip = Tooltip(f'<doughnuts>Doughnut Tree\n <default>Grows 1 doughnut every second!')
 
-pond = Button(cost=50, y=-.3, x=.2, scale=.124, color=color.gray, disabled=True)
+pond = Button(cost=150, y=-.3, x=.2, scale=.124, color=color.gray, disabled=True)
 pond.icon = './assets/pond.png'
 pond.text = str(mw_emp.cost)
 pond.tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut fish every 2 seconds!')
@@ -104,8 +104,8 @@ def buy_fryer1():
 	global ef_level
 	if doughnut >= e_fryer.cost:
 		doughnut -= e_fryer.cost
-		ef_level += 1
 		e_fryer.cost += math.floor(e_fryer.cost/2)
+		ef_level += 1
 		counter.text = str(f'{doughnut} Doughnuts')
 		e_fryer.text = str(e_fryer.cost)
 		invoke(auto_generate_fryer1, 1, 1)
@@ -163,7 +163,7 @@ def quitApp():
 	data2 = json.load(open("data/data.json"))
 	data2["doughnuts"] = doughnut
 	data2["e_fryer_price"] = e_fryer.cost
-	data2["e_fryer_level"] = e_fryer
+	data2["e_fryer_level"] = ef_level
 	data2["e_fryer_doughnuts"] = ef_doughnuts
 	data2["e_fryer_speed"] = ef_speed
 	# data2["songplaying"] = songPlaying
