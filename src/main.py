@@ -3,8 +3,8 @@ from ursina import *
 app = Ursina(borderless=False)
 
 doughnut = 0
-counter = Text(text='0 Doughnuts',y=.25, z=-1, origin=(0, 0), background=True, model='mesh')
-button = Button(text='doughnut', scale=.125)
+counter = Text(text='0 Doughnuts',y=.25, z=-1, origin=(0, 0), background=True)
+button = Button(scale=.125, model='mesh')
 button.icon = './assets/doughnut.png'
 button.pressed_color = button.color.tint(-.2)
 
@@ -15,18 +15,27 @@ def button_click():
 
 button.on_click = button_click
 
-e_fryer = Button(cost=10, x=.2, scale=.124, color=color.gray, disabled=True)
+e_fryer = Button(cost=10, x=.2, y=.15, scale=.124, color=color.gray, disabled=True)
 e_fryer.icon = './assets/e_fryer.png'
 e_fryer.text = str(e_fryer.cost)
 e_fryer.tooltip = Tooltip(f'<doughnuts>Electric fryer\n <default>Generates 1 doughnut every 4 seconds!')
 
-
-mw_emp = Button(cost=50, y=-.15, x=.2, scale=.124, color=color.gray, disabled=True)
+mw_emp = Button(cost=50, y=0, x=.2, scale=.124, color=color.gray, disabled=True)
 mw_emp.icon = './assets/mw_emp.png'
 mw_emp.text = str(mw_emp.cost)
 mw_emp.tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut every 2 seconds!')
 
+trees = Button(cost=50, y=-.15, x=.2, scale=.124, color=color.gray, disabled=True)
+trees.icon = './assets/trees.png'
+trees.text = str(trees.cost)
+trees.tooltip = Tooltip(f'<doughnuts>Doughnut Tree\n <default>Grows 1 doughnut every second!')
 
+pond = Button(cost=50, y=-.3, x=.2, scale=.124, color=color.gray, disabled=True)
+pond.icon = './assets/pond.png'
+pond.text = str(mw_emp.cost)
+pond.tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut fish every 2 seconds!')
+
+# on click buy functions and button automation
 def buy_fryer1():
 	global doughnut
 	if doughnut >= e_fryer.cost:
