@@ -1,9 +1,74 @@
+import json
+import sys
 from ursina import *
+from ursina.prefabs.first_person_controller import FirstPersonController
+
+if not os.path.isdir("data/"):
+  os.makedirs("data")
+
+
+if not os.path.isfile("data/data.json"):
+  open("data/data.json", "w").write(r"{}")
+  data = json.load(open("data/data.json"))
+  data["doughnuts"] = 0
+  data["e_fryer_price"] = 10
+  data["e_fryer_level"] = 0
+  data["e_fryer_enabled"] = False
+  data["e_fryer_doughnuts"] = 1
+  data["e_fryer_speed"] = 4
+  # data["songplaying"] = True
+  # data["sfxplaying"] = True
+  # data["playedbefore"] = False
+  json.dump(data, open("data/data.json", "w"))
+
+def resource_path(relative_path):
+  try:
+    base_path = sys._MEIPASS
+  except Exception:
+    base_path = os.path.abspath(".")
+
+  return os.path.join(base_path, relative_path)
+
+data = json.load(open("data/data.json"))
+
+doughnut_data = data["doughnuts"]
+ef_price = data["e_fryer_price"]
+ef_level = data["e_fryer_level"]
+ef_enabled = data["e_fryer_enabled"]
+ef_doughnuts = data["e_fryer_doughnuts"]
+ef_speed = data["e_fryer_speed"]
 
 app = Ursina(borderless=False)
 
-doughnut = 0
-counter = Text(text='0 Doughnuts',y=.25, z=-1, origin=(0, 0), background=True)
+Sky()
+
+ground = Entity(
+	model='plane',
+	texture='grass',
+	collider='mesh',
+	scale=(100, 1, 100)
+)
+
+# player = FirstPersonController(
+# 	position=(0, 2, -5)
+# )
+
+wall1 = Entity(
+	model='cube',
+	texture='brick',
+	collider='cube',
+	scale=(100, 10, 5),
+	position=(0, 5, 50),
+	color=color.dark_gray
+)
+
+wall2 = duplicate(wall1, z=-50)
+wall3 = duplicate(wall1, rotation_y=90, x=-50, z=0)
+wall4 = duplicate(wall3, x=50)
+wall5 = duplicate(wall1, position=(0, 2, 0), scale=(20, .5, 0.5), color=color.white)
+
+doughnut = doughnut_data
+counter = Text(text=doughnut, y=.25, z=-1, origin=(0, 0))
 button = Button(scale=.125, model='mesh')
 button.icon = './assets/doughnut.png'
 button.pressed_color = button.color.tint(-.2)
@@ -15,7 +80,7 @@ def button_click():
 
 button.on_click = button_click
 
-e_fryer = Button(cost=10, x=.2, y=.15, scale=.124, color=color.gray, disabled=True)
+e_fryer = Button(cost=ef_price, x=.2, y=.15, scale=.124, color=color.gray, disabled=True)
 e_fryer.icon = './assets/e_fryer.png'
 e_fryer.text = str(e_fryer.cost)
 e_fryer.tooltip = Tooltip(f'<doughnuts>Electric fryer\n <default>Generates 1 doughnut every 4 seconds!')
@@ -91,5 +156,26 @@ def update():
 		else:
 			b.disabled = True
 			b.color = color.gray
+
+
+
+def quitApp():
+	data2 = json.load(open("data/data.json"))
+	data2["doughnuts"] = doughnut_data
+	data["e_fryer_price"] = ef_price
+	data["e_fryer_level"] = ef_level
+	data["e_fryer_enabled"] = ef_enabled
+	data["e_fryer_doughnuts"] = ef_doughnuts
+	data["e_fryer_speed"] = ef_speed
+	# data2["songplaying"] = songPlaying
+	# data2["sfxplaying"] = sfxPlaying
+	# data2["playedbefore"] = True
+	json.dump(data2, open("data/data.json", "w"))
+	app.destroy()
+	quit()
+
+def input(key):
+	if key == 'escape':
+		quitApp()
 
 app.run()
