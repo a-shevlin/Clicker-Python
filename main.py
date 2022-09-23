@@ -4,37 +4,35 @@ from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 
 if not os.path.isdir("data/"):
-  os.makedirs("data")
+	os.makedirs("data")
 
 
 if not os.path.isfile("data/data.json"):
-  open("data/data.json", "w").write(r"{}")
-  data = json.load(open("data/data.json"))
-  data["doughnuts"] = 0
-  data["e_fryer_price"] = 10
-  data["e_fryer_level"] = 0
-  data["e_fryer_enabled"] = False
-  data["e_fryer_doughnuts"] = 1
-  data["e_fryer_speed"] = 4
-  # data["songplaying"] = True
-  # data["sfxplaying"] = True
-  # data["playedbefore"] = False
-  json.dump(data, open("data/data.json", "w"))
+	open("data/data.json", "w").write(r"{}")
+	data = json.load(open("data/data.json"))
+	data["doughnuts"] = 0
+	data["e_fryer_price"] = 10
+	data["e_fryer_level"] = 0
+	data["e_fryer_doughnuts"] = 1
+	data["e_fryer_speed"] = 4
+	# data["songplaying"] = True
+	# data["sfxplaying"] = True
+	# data["playedbefore"] = False
+	json.dump(data, open("data/data.json", "w"))
 
 def resource_path(relative_path):
-  try:
-    base_path = sys._MEIPASS
-  except Exception:
-    base_path = os.path.abspath(".")
+	try:
+		base_path = sys._MEIPASS
+	except Exception:
+		base_path = os.path.abspath(".")
 
-  return os.path.join(base_path, relative_path)
+	return os.path.join(base_path, relative_path)
 
 data = json.load(open("data/data.json"))
 
 doughnut_data = data["doughnuts"]
 ef_price = data["e_fryer_price"]
 ef_level = data["e_fryer_level"]
-ef_enabled = data["e_fryer_enabled"]
 ef_doughnuts = data["e_fryer_doughnuts"]
 ef_speed = data["e_fryer_speed"]
 
@@ -103,8 +101,10 @@ pond.tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1
 # on click buy functions and button automation
 def buy_fryer1():
 	global doughnut
+	global ef_level
 	if doughnut >= e_fryer.cost:
 		doughnut -= e_fryer.cost
+		ef_level += 1
 		e_fryer.cost += math.floor(e_fryer.cost/2)
 		counter.text = str(f'{doughnut} Doughnuts')
 		e_fryer.text = str(e_fryer.cost)
@@ -161,17 +161,15 @@ def update():
 
 def quitApp():
 	data2 = json.load(open("data/data.json"))
-	data2["doughnuts"] = doughnut_data
-	data["e_fryer_price"] = ef_price
-	data["e_fryer_level"] = ef_level
-	data["e_fryer_enabled"] = ef_enabled
-	data["e_fryer_doughnuts"] = ef_doughnuts
-	data["e_fryer_speed"] = ef_speed
+	data2["doughnuts"] = doughnut
+	data2["e_fryer_price"] = e_fryer.cost
+	data2["e_fryer_level"] = e_fryer
+	data2["e_fryer_doughnuts"] = ef_doughnuts
+	data2["e_fryer_speed"] = ef_speed
 	# data2["songplaying"] = songPlaying
 	# data2["sfxplaying"] = sfxPlaying
 	# data2["playedbefore"] = True
 	json.dump(data2, open("data/data.json", "w"))
-	app.destroy()
 	quit()
 
 def input(key):
