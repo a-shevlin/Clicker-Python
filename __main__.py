@@ -1,6 +1,4 @@
-import json
-import sys
-import this
+import json, sys, time, sched
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 
@@ -80,21 +78,26 @@ def button_click():
 
 button.on_click = button_click
 
-class Building(Entity):
-
-	def on_click(self, level):
-		level
-		def buy_more(level):
-			global doughnut
-			level
-
-			if doughnut >= self.cost:
-				doughnut-= self.cost
-				self.cost += math.floor(self.cost/3)
-				level += 1
-				counter.text = str(f'{doughnut} Doughnuts')
-				self.text = str(self.cost)
-				invoke(auto_generate_fryer1, 1, 4)
+def update():
+	global doughnut
+	for b in (e_fryer, ):
+		if doughnut >= b.cost:
+			b.disabled = False
+			b.color = color.light_gray
+		else:
+			b.disabled = True
+			b.color = color.gray
+		if ef_level > 0:
+			doughnut += ef_doughnuts
+			counter.text = str(f'{doughnut} Doughnuts')
+			time.sleep(ef_speed)
+	for b in (mw_emp, ):
+		if doughnut >= b.cost:
+			b.disabled = False
+			b.color = color.light_gray
+		else:
+			b.disabled = True
+			b.color = color.gray
 
 e_fryer = Button(cost=ef_price, x=.2, y=.15, scale=.124, color=color.gray, disabled=True)
 e_fryer.icon = './assets/e_fryer.png'
@@ -116,14 +119,6 @@ pond.icon = './assets/pond.png'
 pond.text = str(mw_emp.cost)
 pond.tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut fish every 2 seconds!')
 
-# on click buy functions and button automation
-
-# def 
-	
-		
-
-
-
 def buy_fryer1():
 	global doughnut
 	global ef_level
@@ -133,17 +128,17 @@ def buy_fryer1():
 		ef_level += 1
 		counter.text = str(f'{doughnut} Doughnuts')
 		e_fryer.text = str(e_fryer.cost)
-		invoke(auto_generate_fryer1, 1, 1)
+		# invoke(auto_generate_fryer1, 1, 1)
 
 e_fryer.on_click = buy_fryer1
 
-def auto_generate_fryer1(value=1, interval=4):
-	global doughnut
-	doughnut += 1
-	counter.text = str(f'{doughnut} Doughnuts')
-	e_fryer.animate_scale(.125 * 1.1)
-	e_fryer.animate_scale(.124, delay=.2)
-	invoke(auto_generate_fryer1, value, delay=interval)
+# def auto_generate_fryer1(value=1):
+# 	global doughnut
+# 	doughnut += value
+# 	counter.text = str(f'{doughnut} Doughnuts')
+# 	e_fryer.animate_scale(.125 * 1.1)
+# 	e_fryer.animate_scale(.124, delay=.2)
+	# invoke(auto_generate_fryer1, value, delay=interval)
 
 def buy_mw_emp():
 	global doughnut
@@ -163,28 +158,6 @@ def auto_generate_mw_emp(value=1, interval=2):
 	mw_emp.animate_scale(.125 * 1.1)
 	mw_emp.animate_scale(.124, delay=.2)
 	invoke(auto_generate_mw_emp, value, delay=interval)
-
-
-def update():
-	global doughnut
-	for b in (e_fryer, ):
-		if doughnut >= b.cost:
-			b.disabled = False
-			b.color = color.light_gray
-		else:
-			b.disabled = True
-			b.color = color.gray
-		if ef_level > 0:
-			invoke(auto_generate_fryer1, 1, 1)
-	for b in (mw_emp, ):
-		if doughnut >= b.cost:
-			b.disabled = False
-			b.color = color.light_gray
-		else:
-			b.disabled = True
-			b.color = color.gray
-
-
 
 def quitApp():
 	data2 = json.load(open("data/data.json"))
