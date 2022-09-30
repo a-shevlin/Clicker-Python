@@ -25,3 +25,5 @@
 * research python to exe using both pyinstaller and auto-py-to-exe
 11:25 AM - 12:25 PM
 * research ursina information about inheritance and class structure
+1:30 PM - 2:40 PM
+* watch videos on how ursina can be manipulated
