@@ -16,5 +16,10 @@
 12 PM - 1 PM
 * research python business and ui logic separation
 * draw buttons for tree and pond
-1:40 PM - 2:40 P<
+1:40 PM - 2:40 PM
 * WIP pond button icon
+
+## Friday 9/30/22
+
+8 AM - 9 AM
+* research python to exe using both pyinstaller and auto-py-to-exe
