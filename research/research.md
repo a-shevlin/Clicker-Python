@@ -27,3 +27,5 @@
 * research ursina information about inheritance and class structure
 1:30 PM - 2:40 PM
 * watch videos on how ursina can be manipulated
+3 PM - 4:20 PM
+* WIP restructure base files
