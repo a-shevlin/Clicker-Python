@@ -1,5 +1,6 @@
-import json, sys, time, threading
+import json, sys, threading
 from json import tool
+from tkinter import messagebox, Tk
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 
@@ -71,6 +72,8 @@ wall5 = duplicate(wall1, position=(0, 2, 0), scale=(20, .5, 0.5), color=color.wh
 
 # game logic
 
+master = Tk()
+
 doughnut = doughnut_data
 counter = Text(text = "Click to Start", y=.25, z=-1, origin=(0, 0))
 counter.text = doughnut
@@ -97,10 +100,9 @@ def update():
 		else:
 			b.disabled = True
 			b.color = color.gray
-		if b.level > 0:
-			t = threading.Thread(target=b.auto_run)
-			t.start()
-
+			b.text_color = color.light_gray
+		# while b.level > 0:
+		# 	master.after(b.speed, button_click)
 	for b in (mw_emp, ):
 		if doughnut >= b.cost:
 			b.disabled = False
@@ -140,14 +142,6 @@ class Building(Button):
 					self.level += 1
 					counter.text = str(f'{doughnut} Doughnuts')
 					self.text = str(self.cost)
-	
-	def auto_run(self):
-		global doughnut
-		if self.level > 0:
-			
-			doughnut += self.amt * self.version
-			counter.text = str(f'{doughnut} Doughnuts')
-			time.sleep(self.speed*10)
 
 
 e_fryer = Building(
