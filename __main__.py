@@ -1,4 +1,5 @@
-import json, sys, time, sched
+import json, sys, time, threading
+from json import tool
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 
@@ -14,6 +15,7 @@ if not os.path.isfile("data/data.json"):
 	data["e_fryer_level"] = 0
 	data["e_fryer_doughnuts"] = 1
 	data["e_fryer_speed"] = 4
+	data["e_fryer_version"] = 1
 	# data["songplaying"] = True
 	# data["sfxplaying"] = True
 	# data["playedbefore"] = False
@@ -34,8 +36,11 @@ ef_price = data["e_fryer_price"]
 ef_level = data["e_fryer_level"]
 ef_doughnuts = data["e_fryer_doughnuts"]
 ef_speed = data["e_fryer_speed"]
+ef_version = data["e_fryer_version"]
 
 app = Ursina(borderless=False)
+
+# world logic
 
 Sky()
 
@@ -64,8 +69,11 @@ wall3 = duplicate(wall1, rotation_y=90, x=-50, z=0)
 wall4 = duplicate(wall3, x=50)
 wall5 = duplicate(wall1, position=(0, 2, 0), scale=(20, .5, 0.5), color=color.white)
 
+# game logic
+
 doughnut = doughnut_data
-counter = Text(text=doughnut, y=.25, z=-1, origin=(0, 0))
+counter = Text(text = "Click to Start", y=.25, z=-1, origin=(0, 0))
+counter.text = doughnut
 button = Button(scale=.125, model='mesh')
 button.icon = './assets/doughnut.png'
 button.pressed_color = button.color.tint(-.2)
@@ -74,6 +82,7 @@ def button_click():
 	global doughnut
 	doughnut += 1
 	button.animate_scale(.125 * 1.1)
+	
 	counter.text = str(f'{doughnut} Doughnuts')
 
 button.on_click = button_click
@@ -84,13 +93,14 @@ def update():
 		if doughnut >= b.cost:
 			b.disabled = False
 			b.color = color.light_gray
+			b.text_color = color.white
 		else:
 			b.disabled = True
 			b.color = color.gray
-		# if ef_level > 0:
-			# doughnut += ef_doughnuts
-			# counter.text = str(f'{doughnut} Doughnuts')
-			# time.sleep(ef_speed)
+		if b.level > 0:
+			t = threading.Thread(target=b.auto_run)
+			t.start()
+
 	for b in (mw_emp, ):
 		if doughnut >= b.cost:
 			b.disabled = False
@@ -101,18 +111,23 @@ def update():
 
 
 class Building(Button):
-	def __init__(self, x, y, cost, tooltip, level):
+	def __init__(self, y, cost, tooltip, level, speed, amt, version):
 		super().__init__(
 			parent=scene,
 			scale = 1,
 			color = color.gray,
 			disabled = True,
 			text = str(cost),
+			text_origin=(-0.5, -0.5, -.5),
+			text_color = color.light_gray,
 			cost = cost,
-			x = x,
+			x = 1.5,
 			y = y,
 			tooltip = tooltip,
 			level = level,
+			speed = speed,
+			amt = amt,
+			version = version,
 		)
 
 	def input(self, key):
@@ -125,35 +140,60 @@ class Building(Button):
 					self.level += 1
 					counter.text = str(f'{doughnut} Doughnuts')
 					self.text = str(self.cost)
+	
+	def auto_run(self):
+		global doughnut
+		if self.level > 0:
+			
+			doughnut += self.amt * self.version
+			counter.text = str(f'{doughnut} Doughnuts')
+			time.sleep(self.speed*10)
+
 
 e_fryer = Building(
-	cost=ef_price, 
-	x=1.5, 
-	y=1, 
+	cost = ef_price, 
+	y = 1.2, 
 	level = ef_level,
+	speed = ef_speed,
+	amt = ef_doughnuts,
+	version = ef_version,
 	tooltip=Tooltip(f'<doughnuts>Electric fryer\n <default>Generates 1 doughnut every 4 seconds!')
 	)
-# e_fryer.icon = './assets/e_fryer.png', 
+
+e_fryer.icon = './assets/e_fryer.png'
 
 mw_emp = Building(
-	cost=50, 
-	x=1.5,
-	y=0, 
+	cost = 50, 
+	y = 0.1, 
 	level = 1,
+	speed = 2,
+	amt = 1,
+	version = 1,
 	tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut every 2 seconds!')
 )
-# mw_emp.icon = './assets/mw_emp.png'
+mw_emp.icon = './assets/mw_emp.png'
 
-trees = Button(cost=100, y=-.15, x=.2, scale=.124, color=color.gray, disabled=True)
+trees = Building(
+	cost = 150,
+	y = -1,
+	level = 1,
+	speed = 1,
+	amt = 1,
+	version = 1,
+	tooltip = Tooltip(f'<doughnuts>Doughnut Tree\n <default>Grows 1 doughnut every second!')
+	)
 trees.icon = './assets/d_tree.png'
-trees.text = str(trees.cost)
-trees.tooltip = Tooltip(f'<doughnuts>Doughnut Tree\n <default>Grows 1 doughnut every second!')
 
-pond = Button(cost=150, y=-.3, x=.2, scale=.124, color=color.gray, disabled=True)
+pond = Building(
+	cost = 225,
+	y = -2.1,
+	level = 1,
+	speed = 1,
+	amt = 3,
+	version = 1,
+	tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut fish every 2 seconds!')
+	)
 pond.icon = './assets/pond.png'
-pond.text = str(mw_emp.cost)
-pond.tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut fish every 2 seconds!')
-
 # def auto_generate_fryer1(value=1):
 # 	global doughnut
 # 	doughnut += value
@@ -180,6 +220,8 @@ def auto_generate_mw_emp(value=1, interval=2):
 	mw_emp.animate_scale(.125 * 1.1)
 	mw_emp.animate_scale(.124, delay=.2)
 	invoke(auto_generate_mw_emp, value, delay=interval)
+
+# end game logic
 
 def quitApp():
 	data2 = json.load(open("data/data.json"))
