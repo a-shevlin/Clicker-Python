@@ -49,7 +49,7 @@ Sky()
 
 ground = Entity(
 	model='plane',
-	texture='grass',
+	texture='./assets/wall_V1',
 	collider='mesh',
 	scale=(100, 1, 100),
 	shader=lit_with_shadows_shader
@@ -61,7 +61,7 @@ player = FirstPersonController(
 
 wall1 = Entity(
 	model='cube',
-	texture='brick',
+	texture='./assets/e_fryer.png',
 	collider='cube',
 	scale=(100, 10, 5),
 	position=(0, 5, 50),
@@ -72,7 +72,7 @@ wall1 = Entity(
 wall2 = duplicate(wall1, z=-50)
 wall3 = duplicate(wall1, rotation_y=90, x=-50, z=0)
 wall4 = duplicate(wall3, x=50)
-wall5 = duplicate(wall1, position=(0, 2, .3), scale=(20, 8, .5), color=color.cyan)
+wall5 = duplicate(wall1, position=(0, 4, .3), scale=(20, 8, .5), color=color.cyan)
 
 # game logic
 
