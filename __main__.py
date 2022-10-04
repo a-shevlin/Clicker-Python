@@ -1,13 +1,12 @@
-import json, sys, threading
+import json, sys, threading, time
 from pyclbr import Function
-from json import tool
-from tkinter import messagebox, Tk
+import schedule
 from ursina import *
+from ursina.shaders import lit_with_shadows_shader
 from ursina.prefabs.first_person_controller import FirstPersonController
 
 if not os.path.isdir("data/"):
 	os.makedirs("data")
-
 
 if not os.path.isfile("data/data.json"):
 	open("data/data.json", "w").write(r"{}")
@@ -33,7 +32,7 @@ def resource_path(relative_path):
 
 data = json.load(open("data/data.json"))
 
-doughnut_data = data["doughnuts"]
+doughnut = data["doughnuts"]
 ef_price = data["e_fryer_price"]
 ef_level = data["e_fryer_level"]
 ef_doughnuts = data["e_fryer_doughnuts"]
@@ -50,7 +49,8 @@ ground = Entity(
 	model='plane',
 	texture='grass',
 	collider='mesh',
-	scale=(100, 1, 100)
+	scale=(100, 1, 100),
+	shader=lit_with_shadows_shader
 )
 
 player = FirstPersonController(
@@ -63,7 +63,8 @@ wall1 = Entity(
 	collider='cube',
 	scale=(100, 10, 5),
 	position=(0, 5, 50),
-	color=color.dark_gray
+	color=color.dark_gray,
+	shader=lit_with_shadows_shader
 )
 
 wall2 = duplicate(wall1, z=-50)
@@ -73,9 +74,6 @@ wall5 = duplicate(wall1, position=(0, 2, .3), scale=(20, 8, .5), color=color.cya
 
 # game logic
 
-master = Tk()
-
-doughnut = doughnut_data
 counter = Text(text = "Click to Start", y=.25, z=-1)
 counter.text = doughnut
 
@@ -99,36 +97,6 @@ class Doughnut(Button):
 				self.animate_scale(1)
 				counter.text = str(f'{doughnut} Doughnuts')
 
-button = Doughnut()
-
-def update():
-	global doughnut
-	for b in (e_fryer, mw_emp, trees, pond):
-		if doughnut >= b.cost:
-			b.disabled = False
-			b.color = color.light_gray
-			b.text_color = color.white
-		else:
-			b.disabled = True
-			b.color = color.gray
-			b.text_color = color.light_gray
-		# while b.level > 0:
-		# 	auto_run.start()
-	# for b in (mw_emp, ):
-	# 	if doughnut >= b.cost:
-	# 		b.disabled = False
-	# 		b.color = color.light_gray
-	# 	else:
-	# 		b.disabled = True
-	# 		b.color = color.gray
-
-def cps(self):
-	global doughnut
-	doughnut += self.amt
-	self.animate_scale(.125 * 1.1)
-	counter.text = str(f'{doughnut} Doughnuts')
-
-auto_run = Sequence(1, Func(cps, duration=1), loop=True)
 class Building(Button):
 	def __init__(self, y, cost, level, speed, amt, version, icon):
 		super().__init__(
@@ -162,8 +130,9 @@ class Building(Button):
 					self.cost += math.floor(self.cost/3)
 					self.level += 1
 					counter.text = str(f'{doughnut} Doughnuts')
-					self.text = str(f'{self.cost} to buy\n\n\n{self.u_cost} to upgrade')
+					self.text = str(f'{self.cost} to buy\n\n\n\n\n{self.u_cost} to upgrade')
 					self.text_entity.world_scale = .4
+
 			if key == 'u':
 				if doughnut >= self.u_cost:
 					doughnut -= self.u_cost
@@ -171,8 +140,17 @@ class Building(Button):
 					self.u_cost += math.floor(self.cost/2.5)
 					self.version += 1
 					counter.text = str(f'{doughnut} Doughnuts')
-					self.text = str(f'{self.cost} to buy\n\n\n{self.u_cost} to upgrade')
+					self.text = str(f'{self.cost} to buy\n\n\n\n\n{self.u_cost} to upgrade')
 					self.text_entity.world_scale = .4
+
+button = Doughnut()
+
+def cps(self):
+	while(self.level > 0):
+		global doughnut
+		doughnut += self.amt
+		self.animate_scale(.125 * 1.1)
+		counter.text = str(f'{doughnut} Doughnuts')
 
 e_fryer = Building(
 	cost = ef_price, 
@@ -241,7 +219,22 @@ pond = Building(
 # 	mw_emp.animate_scale(.124, delay=.2)
 # 	invoke(auto_generate_mw_emp, value, delay=interval)
 
+
+
 # end game logic
+
+wp = WindowPanel(
+    title='Settings',
+    content=(
+        Text('Save: Press ESC'),
+        Button(text='Submit', color=color.azure),
+        Slider(),
+        Slider(),
+        ),
+        popup=True,
+        enabled=False
+    )
+    
 
 def quitApp():
 	data2 = json.load(open("data/data.json"))
@@ -259,5 +252,34 @@ def quitApp():
 def input(key):
 	if key == 'escape':
 		quitApp()
+	if key == 'tab':
+		wp.enabled = True
+		mouse = True
+
+pivot = Entity()
+AmbientLight(parent=pivot, y=10, z=30, shadows=True)
 
 app.run()
+
+def update():
+	global doughnut
+	for b in (e_fryer, mw_emp, trees, pond):
+		if doughnut >= b.cost:
+			b.disabled = False
+			b.color = color.light_gray
+			b.text_color = color.white
+		else:
+			b.disabled = True
+			b.color = color.gray
+			b.text_color = color.light_gray
+		while b.level > 0:
+			schedule.every(5).seconds.do(cps, b)
+			schedule.run_pending()
+			time.sleep(1)
+	for b in (mw_emp, ):
+		if doughnut >= b.cost:
+			b.disabled = False
+			b.color = color.light_gray
+		else:
+			b.disabled = True
+			b.color = color.gray
