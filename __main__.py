@@ -49,7 +49,7 @@ Sky()
 
 ground = Entity(
 	model='plane',
-	texture='./assets/wall_V1',
+	texture='./assets/wall_V2',
 	collider='mesh',
 	scale=(100, 1, 100),
 	shader=lit_with_shadows_shader
