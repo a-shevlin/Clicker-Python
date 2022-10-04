@@ -1,4 +1,5 @@
 import json, sys, threading
+from pyclbr import Function
 from json import tool
 from tkinter import messagebox, Tk
 from ursina import *
@@ -102,16 +103,22 @@ def update():
 			b.color = color.gray
 			b.text_color = color.light_gray
 		# while b.level > 0:
-		# 	master.after(b.speed, button_click)
-	for b in (mw_emp, ):
-		if doughnut >= b.cost:
-			b.disabled = False
-			b.color = color.light_gray
-		else:
-			b.disabled = True
-			b.color = color.gray
+		# 	auto_run.start()
+	# for b in (mw_emp, ):
+	# 	if doughnut >= b.cost:
+	# 		b.disabled = False
+	# 		b.color = color.light_gray
+	# 	else:
+	# 		b.disabled = True
+	# 		b.color = color.gray
 
+def cps(self):
+	global doughnut
+	doughnut += self.amt
+	self.animate_scale(.125 * 1.1)
+	counter.text = str(f'{doughnut} Doughnuts')
 
+auto_run = Sequence(1, Func(cps, duration=1), loop=True)
 class Building(Button):
 	def __init__(self, y, cost, tooltip, level, speed, amt, version):
 		super().__init__(
@@ -119,10 +126,10 @@ class Building(Button):
 			scale = 1,
 			color = color.gray,
 			disabled = True,
-			text = str(cost),
 			text_origin=(-0.5, -0.5, -.5),
 			text_color = color.light_gray,
 			cost = cost,
+			u_cost = cost * 3,
 			x = 1.5,
 			y = y,
 			tooltip = tooltip,
@@ -130,6 +137,7 @@ class Building(Button):
 			speed = speed,
 			amt = amt,
 			version = version,
+			text = str(f'{cost} to buy'),
 		)
 
 	def input(self, key):
@@ -141,8 +149,15 @@ class Building(Button):
 					self.cost += math.floor(self.cost/3)
 					self.level += 1
 					counter.text = str(f'{doughnut} Doughnuts')
-					self.text = str(self.cost)
-
+					self.text = str(f'{self.cost} to buy and {self.u_cost} to upgrade')
+			if key == 'u':
+				if doughnut >= self.u_cost:
+					doughnut -= self.u_cost
+					self.amt += math.floor(self.amt * 1.5)
+					self.u_cost += math.floor(self.cost/2.5)
+					self.version += 1
+					counter.text = str(f'{doughnut} Doughnuts')
+					self.text = str(f'{self.cost} to buy and {self.u_cost} to upgrade')
 
 e_fryer = Building(
 	cost = ef_price, 
@@ -188,6 +203,7 @@ pond = Building(
 	tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut fish every 2 seconds!')
 	)
 pond.icon = './assets/pond.png'
+
 # def auto_generate_fryer1(value=1):
 # 	global doughnut
 # 	doughnut += value
@@ -196,24 +212,24 @@ pond.icon = './assets/pond.png'
 # 	e_fryer.animate_scale(.124, delay=.2)
 	# invoke(auto_generate_fryer1, value, delay=interval)
 
-def buy_mw_emp():
-	global doughnut
-	if doughnut >= mw_emp.cost:
-		doughnut -= mw_emp.cost
-		mw_emp.cost += math.floor(mw_emp.cost/3)
-		counter.text = str(f'{doughnut} Doughnuts')
-		mw_emp.text = str(mw_emp.cost)
-		invoke(auto_generate_mw_emp, 1, 1)
+# def buy_mw_emp():
+# 	global doughnut
+# 	if doughnut >= mw_emp.cost:
+# 		doughnut -= mw_emp.cost
+# 		mw_emp.cost += math.floor(mw_emp.cost/3)
+# 		counter.text = str(f'{doughnut} Doughnuts')
+# 		mw_emp.text = str(mw_emp.cost)
+# 		invoke(auto_generate_mw_emp, 1, 1)
 
-mw_emp.on_click = buy_mw_emp
+# mw_emp.on_click = buy_mw_emp
 
-def auto_generate_mw_emp(value=1, interval=2):
-	global doughnut
-	doughnut += 1
-	counter.text = str(f'{doughnut} Doughnuts')
-	mw_emp.animate_scale(.125 * 1.1)
-	mw_emp.animate_scale(.124, delay=.2)
-	invoke(auto_generate_mw_emp, value, delay=interval)
+# def auto_generate_mw_emp(value=1, interval=2):
+# 	global doughnut
+# 	doughnut += 1
+# 	counter.text = str(f'{doughnut} Doughnuts')
+# 	mw_emp.animate_scale(.125 * 1.1)
+# 	mw_emp.animate_scale(.124, delay=.2)
+# 	invoke(auto_generate_mw_emp, value, delay=interval)
 
 # end game logic
 
@@ -221,9 +237,9 @@ def quitApp():
 	data2 = json.load(open("data/data.json"))
 	data2["doughnuts"] = doughnut
 	data2["e_fryer_price"] = e_fryer.cost
-	data2["e_fryer_level"] = ef_level
-	data2["e_fryer_doughnuts"] = ef_doughnuts
-	data2["e_fryer_speed"] = ef_speed
+	data2["e_fryer_level"] = e_fryer.level
+	data2["e_fryer_doughnuts"] = e_fryer.amt
+	data2["e_fryer_speed"] = e_fryer.speed
 	# data2["songplaying"] = songPlaying
 	# data2["sfxplaying"] = sfxPlaying
 	# data2["playedbefore"] = True
