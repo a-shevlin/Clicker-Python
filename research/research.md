@@ -46,3 +46,6 @@
 
 1 PM - 2:10 PM
 * WIP draw wall texture
+
+3:30 PM - 4:30 PM
+* Adjust wall_v2 texture repeat
