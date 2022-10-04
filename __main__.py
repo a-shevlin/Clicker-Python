@@ -53,9 +53,9 @@ ground = Entity(
 	scale=(100, 1, 100)
 )
 
-# player = FirstPersonController(
-# 	position=(0, 2, -5)
-# )
+player = FirstPersonController(
+	position=(0, 2, -5)
+)
 
 wall1 = Entity(
 	model='cube',
@@ -69,31 +69,41 @@ wall1 = Entity(
 wall2 = duplicate(wall1, z=-50)
 wall3 = duplicate(wall1, rotation_y=90, x=-50, z=0)
 wall4 = duplicate(wall3, x=50)
-wall5 = duplicate(wall1, position=(0, 2, 0), scale=(20, .5, 0.5), color=color.white)
+wall5 = duplicate(wall1, position=(0, 2, .3), scale=(20, 8, .5), color=color.cyan)
 
 # game logic
 
 master = Tk()
 
 doughnut = doughnut_data
-counter = Text(text = "Click to Start", y=.25, z=-1, origin=(0, 0))
+counter = Text(text = "Click to Start", y=.25, z=-1)
 counter.text = doughnut
-button = Button(scale=.125, model='mesh')
-button.icon = './assets/doughnut.png'
-button.pressed_color = button.color.tint(-.2)
 
-def button_click():
-	global doughnut
-	doughnut += 1
-	button.animate_scale(.125 * 1.1)
+class Doughnut(Button):
+	def __init__(self):
+		super().__init__(
+			parent = scene,
+			scale = 1, 
+			x = 0, 
+			y = 2,
+			cps = 1,
+			icon = './assets/doughnut.png', 
+		)
 	
-	counter.text = str(f'{doughnut} Doughnuts')
+	def input(self, key):
+		if self.hovered:
+			if key == 'left mouse down':
+				global doughnut
+				doughnut += 1
+				self.animate_scale(1 * 1.1)
+				self.animate_scale(1)
+				counter.text = str(f'{doughnut} Doughnuts')
 
-button.on_click = button_click
+button = Doughnut()
 
 def update():
 	global doughnut
-	for b in (e_fryer, ):
+	for b in (e_fryer, mw_emp, trees, pond):
 		if doughnut >= b.cost:
 			b.disabled = False
 			b.color = color.light_gray
@@ -120,25 +130,28 @@ def cps(self):
 
 auto_run = Sequence(1, Func(cps, duration=1), loop=True)
 class Building(Button):
-	def __init__(self, y, cost, tooltip, level, speed, amt, version):
+	def __init__(self, y, cost, level, speed, amt, version, icon):
 		super().__init__(
 			parent=scene,
-			scale = 1,
+			scale = 1.25,
 			color = color.gray,
 			disabled = True,
-			text_origin=(-0.5, -0.5, -.5),
+			text_origin=(-0.5, -0.5, -.2),
 			text_color = color.light_gray,
 			cost = cost,
 			u_cost = cost * 3,
 			x = 1.5,
 			y = y,
-			tooltip = tooltip,
+			tooltip = Tooltip(f'<doughnuts>Electric fryer\n <default>Generates {amt} doughnut every {speed} seconds!'),
 			level = level,
 			speed = speed,
 			amt = amt,
 			version = version,
-			text = str(f'{cost} to buy'),
+			icon = icon,
+			text = str(f'{cost} to buy')
 		)
+		
+		self.text_entity.world_scale = .4
 
 	def input(self, key):
 		if self.hovered:
@@ -149,7 +162,8 @@ class Building(Button):
 					self.cost += math.floor(self.cost/3)
 					self.level += 1
 					counter.text = str(f'{doughnut} Doughnuts')
-					self.text = str(f'{self.cost} to buy and {self.u_cost} to upgrade')
+					self.text = str(f'{self.cost} to buy\n\n\n{self.u_cost} to upgrade')
+					self.text_entity.world_scale = .4
 			if key == 'u':
 				if doughnut >= self.u_cost:
 					doughnut -= self.u_cost
@@ -157,52 +171,48 @@ class Building(Button):
 					self.u_cost += math.floor(self.cost/2.5)
 					self.version += 1
 					counter.text = str(f'{doughnut} Doughnuts')
-					self.text = str(f'{self.cost} to buy and {self.u_cost} to upgrade')
+					self.text = str(f'{self.cost} to buy\n\n\n{self.u_cost} to upgrade')
+					self.text_entity.world_scale = .4
 
 e_fryer = Building(
 	cost = ef_price, 
-	y = 1.2, 
+	y = 1.5, 
 	level = ef_level,
 	speed = ef_speed,
 	amt = ef_doughnuts,
 	version = ef_version,
-	tooltip=Tooltip(f'<doughnuts>Electric fryer\n <default>Generates 1 doughnut every 4 seconds!')
+	icon = './assets/e_fryer.png'
 	)
-
-e_fryer.icon = './assets/e_fryer.png'
 
 mw_emp = Building(
 	cost = 50, 
-	y = 0.1, 
+	y = 0, 
 	level = 1,
 	speed = 2,
 	amt = 1,
 	version = 1,
-	tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut every 2 seconds!')
+	icon = './assets/mw_emp.png'
 )
-mw_emp.icon = './assets/mw_emp.png'
 
 trees = Building(
 	cost = 150,
-	y = -1,
+	y = -1.5,
 	level = 1,
 	speed = 1,
 	amt = 1,
 	version = 1,
-	tooltip = Tooltip(f'<doughnuts>Doughnut Tree\n <default>Grows 1 doughnut every second!')
+	icon = './assets/d_tree.png'
 	)
-trees.icon = './assets/d_tree.png'
 
 pond = Building(
 	cost = 225,
-	y = -2.1,
+	y = -3,
 	level = 1,
 	speed = 1,
 	amt = 3,
 	version = 1,
-	tooltip = Tooltip(f'<doughnuts>Minimum Wage Employee\n <default>Generates 1 doughnut fish every 2 seconds!')
+	icon = './assets/pond.png'
 	)
-pond.icon = './assets/pond.png'
 
 # def auto_generate_fryer1(value=1):
 # 	global doughnut
