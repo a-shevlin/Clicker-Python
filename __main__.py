@@ -12,6 +12,7 @@ if not os.path.isfile("data/data.json"):
 	open("data/data.json", "w").write(r"{}")
 	data = json.load(open("data/data.json"))
 	data["doughnuts"] = 0
+	data["d_cps"] = 1
 	data["e_fryer_price"] = 10
 	data["e_fryer_level"] = 0
 	data["e_fryer_doughnuts"] = 1
@@ -33,6 +34,7 @@ def resource_path(relative_path):
 data = json.load(open("data/data.json"))
 
 doughnut = data["doughnuts"]
+d_cps = data["d_cps"]
 ef_price = data["e_fryer_price"]
 ef_level = data["e_fryer_level"]
 ef_doughnuts = data["e_fryer_doughnuts"]
@@ -78,13 +80,13 @@ counter = Text(text = "Click to Start", y=.25, z=-1)
 counter.text = doughnut
 
 class Doughnut(Button):
-	def __init__(self):
+	def __init__(self, cps):
 		super().__init__(
 			parent = scene,
-			scale = 1, 
+			scale = 1.5, 
 			x = 0, 
 			y = 2,
-			cps = 1,
+			cps = cps,
 			icon = './assets/doughnut.png', 
 		)
 	
@@ -92,13 +94,15 @@ class Doughnut(Button):
 		if self.hovered:
 			if key == 'left mouse down':
 				global doughnut
-				doughnut += 1
-				self.animate_scale(1 * 1.1)
-				self.animate_scale(1)
+				doughnut += self.cps
+				self.animate_scale(self.scale * 1.1)
+				self.animate_scale(self.scale)
 				counter.text = str(f'{doughnut} Doughnuts')
 
+button = Doughnut(d_cps)
+
 class Building(Button):
-	def __init__(self, y, cost, level, speed, amt, version, icon):
+	def __init__(self, x, y, cost, level, speed, amt, version, icon):
 		super().__init__(
 			parent=scene,
 			scale = 1.25,
@@ -108,9 +112,9 @@ class Building(Button):
 			text_color = color.light_gray,
 			cost = cost,
 			u_cost = cost * 3,
-			x = 1.5,
+			x = x,
 			y = y,
-			tooltip = Tooltip(f'<doughnuts>Electric fryer\n <default>Generates {amt} doughnut every {speed} seconds!'),
+			tooltip = Tooltip(f'Increases base click\nUpgrade with U'),
 			level = level,
 			speed = speed,
 			amt = amt,
@@ -125,10 +129,12 @@ class Building(Button):
 		if self.hovered:
 			if key == 'left mouse down':
 				global doughnut
+				global button
 				if doughnut >= self.cost:
 					doughnut -= self.cost
 					self.cost += math.floor(self.cost/3)
 					self.level += 1
+					button.cps += self.amt
 					counter.text = str(f'{doughnut} Doughnuts')
 					self.text = str(f'{self.cost} to buy\n\n\n\n\n{self.u_cost} to upgrade')
 					self.text_entity.world_scale = .4
@@ -136,14 +142,15 @@ class Building(Button):
 			if key == 'u':
 				if doughnut >= self.u_cost:
 					doughnut -= self.u_cost
-					self.amt += math.floor(self.amt * 1.5)
+					self.amt += math.floor(self.amt * 2)
+					button.cps += self.amt
 					self.u_cost += math.floor(self.cost/2.5)
 					self.version += 1
 					counter.text = str(f'{doughnut} Doughnuts')
 					self.text = str(f'{self.cost} to buy\n\n\n\n\n{self.u_cost} to upgrade')
 					self.text_entity.world_scale = .4
 
-button = Doughnut()
+#  
 
 def cps(self):
 	while(self.level > 0):
@@ -154,7 +161,8 @@ def cps(self):
 
 e_fryer = Building(
 	cost = ef_price, 
-	y = 1.5, 
+	x = 1.5,
+	y = 3, 
 	level = ef_level,
 	speed = ef_speed,
 	amt = ef_doughnuts,
@@ -164,7 +172,8 @@ e_fryer = Building(
 
 mw_emp = Building(
 	cost = 50, 
-	y = 0, 
+	x = 1.5,
+	y = 1.5, 
 	level = 1,
 	speed = 2,
 	amt = 1,
@@ -174,7 +183,8 @@ mw_emp = Building(
 
 trees = Building(
 	cost = 150,
-	y = -1.5,
+	x = -1.5,
+	y = 3,
 	level = 1,
 	speed = 1,
 	amt = 1,
@@ -184,7 +194,8 @@ trees = Building(
 
 pond = Building(
 	cost = 225,
-	y = -3,
+	x = -1.5,
+	y = 1.5,
 	level = 1,
 	speed = 1,
 	amt = 3,
@@ -223,6 +234,26 @@ pond = Building(
 
 # end game logic
 
+def update():
+	global doughnut
+	for b in (e_fryer, mw_emp, trees, pond):
+		if doughnut >= b.cost:
+			b.disabled = False
+			b.color = color.light_gray
+			b.text_color = color.white
+		else:
+			b.disabled = True
+			b.color = color.gray
+			b.text_color = color.light_gray
+	for b in (mw_emp, ):
+		if doughnut >= b.cost:
+			b.disabled = False
+			b.color = color.light_gray
+		else:
+			b.disabled = True
+			b.color = color.gray
+
+
 wp = WindowPanel(
     title='Settings',
     content=(
@@ -239,6 +270,7 @@ wp = WindowPanel(
 def quitApp():
 	data2 = json.load(open("data/data.json"))
 	data2["doughnuts"] = doughnut
+	data2["d_cps"] = button.cps
 	data2["e_fryer_price"] = e_fryer.cost
 	data2["e_fryer_level"] = e_fryer.level
 	data2["e_fryer_doughnuts"] = e_fryer.amt
@@ -261,25 +293,3 @@ AmbientLight(parent=pivot, y=10, z=30, shadows=True)
 
 app.run()
 
-def update():
-	global doughnut
-	for b in (e_fryer, mw_emp, trees, pond):
-		if doughnut >= b.cost:
-			b.disabled = False
-			b.color = color.light_gray
-			b.text_color = color.white
-		else:
-			b.disabled = True
-			b.color = color.gray
-			b.text_color = color.light_gray
-		while b.level > 0:
-			schedule.every(5).seconds.do(cps, b)
-			schedule.run_pending()
-			time.sleep(1)
-	for b in (mw_emp, ):
-		if doughnut >= b.cost:
-			b.disabled = False
-			b.color = color.light_gray
-		else:
-			b.disabled = True
-			b.color = color.gray
