@@ -43,3 +43,6 @@
 
 8:10 AM - 9:10 AM
 * WIP loop in external python files
+
+1 PM - 2:10 PM
+* WIP draw wall texture
