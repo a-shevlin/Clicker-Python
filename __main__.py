@@ -20,6 +20,21 @@ if not os.path.isfile("data/data.json"):
 	data["e_fryer_doughnuts"] = 1
 	data["e_fryer_speed"] = 4
 	data["e_fryer_version"] = 1
+	data["mw_emp_price"] = 50
+	data["mw_emp_level"] = 0
+	data["mw_emp_doughnuts"] = 1
+	data["mw_emp_speed"] = 2
+	data["mw_emp_version"] = 1
+	data["trees_price"] = 500
+	data["trees_level"] = 0
+	data["trees_doughnuts"] = 1
+	data["trees_speed"] = 1
+	data["trees_version"] = 1
+	data["pond_price"] = 1200
+	data["pond_level"] = 0
+	data["pond_doughnuts"] = 5
+	data["pond_speed"] = 4
+	data["pond_version"] = 1
 	# data["songplaying"] = True
 	# data["sfxplaying"] = True
 	# data["playedbefore"] = False
@@ -42,6 +57,21 @@ ef_level = data["e_fryer_level"]
 ef_doughnuts = data["e_fryer_doughnuts"]
 ef_speed = data["e_fryer_speed"]
 ef_version = data["e_fryer_version"]
+mw_emp_price = data["mw_emp_price"]
+mw_emp_level = data["mw_emp_level"]
+mw_emp_doughnuts = data['mw_emp_doughnuts']
+mw_emp_speed = data['mw_emp_speed']
+mw_emp_version = data['mw_emp_version']
+trees_price = data["trees_price"]
+trees_level = data["trees_level"]
+trees_doughnuts = data['trees_doughnuts']
+trees_speed = data['trees_speed']
+trees_version = data['trees_version']
+pond_price = data["pond_price"]
+pond_level = data["pond_level"]
+pond_doughnuts = data['pond_doughnuts']
+pond_speed = data['pond_speed']
+pond_version = data['pond_version']
 
 app = Ursina(borderless=False)
 
@@ -177,35 +207,35 @@ e_fryer = Building(
 	)
 
 mw_emp = Building(
-	cost = 50, 
+	cost = mw_emp_price, 
 	x = 1.5,
 	y = 1.5, 
-	level = 0,
-	speed = 2,
-	amt = 1,
-	version = 1,
+	level = mw_emp_level,
+	speed = mw_emp_speed,
+	amt = mw_emp_doughnuts,
+	version = mw_emp_version,
 	icon = './assets/mw_emp.png'
 )
 
 trees = Building(
-	cost = 150,
+	cost = trees_price,
 	x = -1.5,
 	y = 3,
-	level = 0,
-	speed = 1,
-	amt = 1,
-	version = 1,
+	level = trees_level,
+	speed = trees_speed,
+	amt = trees_doughnuts,
+	version = trees_version,
 	icon = './assets/d_tree.png'
 	)
 
 pond = Building(
-	cost = 225,
+	cost = pond_price,
 	x = -1.5,
 	y = 1.5,
-	level = 0,
-	speed = 1,
-	amt = 3,
-	version = 1,
+	level = pond_level,
+	speed = pond_speed,
+	amt = pond_doughnuts,
+	version = pond_version,
 	icon = './assets/pond.png'
 	)
 
