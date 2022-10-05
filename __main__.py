@@ -174,7 +174,7 @@ mw_emp = Building(
 	cost = 50, 
 	x = 1.5,
 	y = 1.5, 
-	level = 1,
+	level = 0,
 	speed = 2,
 	amt = 1,
 	version = 1,
@@ -185,7 +185,7 @@ trees = Building(
 	cost = 150,
 	x = -1.5,
 	y = 3,
-	level = 1,
+	level = 0,
 	speed = 1,
 	amt = 1,
 	version = 1,
@@ -196,20 +196,20 @@ pond = Building(
 	cost = 225,
 	x = -1.5,
 	y = 1.5,
-	level = 1,
+	level = 0,
 	speed = 1,
 	amt = 3,
 	version = 1,
 	icon = './assets/pond.png'
 	)
 
-def auto_generate_fryer1(value=1, interval=4):
+def auto_generate_fryer1(value=1):
 	global doughnut
 	doughnut += value
 	counter.text = str(f'{doughnut} Doughnuts')
 	# self.animate_scale(.125 * 1.1)
 	# self.animate_scale(.124, delay=.2)
-	invoke(auto_generate_fryer1, value, delay=interval)
+	# invoke(auto_generate_fryer1, 1, delay=5)
 
 # def buy_mw_emp():
 # 	global doughnut
@@ -236,16 +236,16 @@ def auto_generate_fryer1(value=1, interval=4):
 
 def update():
 	global doughnut
+	if e_fryer.level > 0:
+			invoke(auto_generate_fryer1, 1, delay=5)
 	for b in (e_fryer, mw_emp, trees, pond):
-		
 		if doughnut >= b.cost:
 			b.disabled = False
 			b.text_color = color.white
 		else:
 			b.disabled = True
 			b.text_color = color.light_gray
-		if b.level > 0:
-			invoke(auto_generate_fryer1, 1, 1)
+
 			# invoke(cps, b, delay=5)
 
 
@@ -283,6 +283,7 @@ def input(key):
 		wp.enabled = True
 		mouse = True
 
+		
 pivot = Entity()
 AmbientLight(parent=pivot, y=10, z=30, shadows=True)
 
