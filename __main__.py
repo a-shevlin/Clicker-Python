@@ -1,9 +1,11 @@
-import json, sys, threading, time
+import json, sys
 from pyclbr import Function
 import schedule
 from ursina import *
 from ursina.shaders import lit_with_shadows_shader
 from ursina.prefabs.first_person_controller import FirstPersonController
+from time import time, sleep
+
 
 if not os.path.isdir("data/"):
 	os.makedirs("data")
@@ -207,33 +209,13 @@ pond = Building(
 	icon = './assets/pond.png'
 	)
 
-def auto_generate(self, value):
+def auto_generate(self):
 	global doughnut
-	doughnut += value
+	doughnut += self.amt
 	counter.text = str(f'{doughnut} Doughnuts')
-	self.animate_scale(.125 * 1.1)
-	self.animate_scale(.124, delay=.2)
-	# invoke(auto_generate_fryer1, 1, delay=5)
-
-# def buy_mw_emp():
-# 	global doughnut
-# 	if doughnut >= mw_emp.cost:
-# 		doughnut -= mw_emp.cost
-# 		mw_emp.cost += math.floor(mw_emp.cost/3)
-# 		counter.text = str(f'{doughnut} Doughnuts')
-# 		mw_emp.text = str(mw_emp.cost)
-# 		invoke(auto_generate_mw_emp, 1, 1)
-
-# mw_emp.on_click = buy_mw_emp
-
-# def auto_generate_mw_emp(value=1, interval=2):
-# 	global doughnut
-# 	doughnut += 1
-# 	counter.text = str(f'{doughnut} Doughnuts')
-# 	mw_emp.animate_scale(.125 * 1.1)
-# 	mw_emp.animate_scale(.124, delay=.2)
-# 	invoke(auto_generate_mw_emp, value, delay=interval)
-
+	self.animate_scale(self.scale * 1.5)
+	self.animate_scale(self.scale, delay=.2)
+	# 
 
 
 # end game logic
