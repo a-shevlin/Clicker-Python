@@ -49,7 +49,8 @@ Sky()
 
 ground = Entity(
 	model='plane',
-	texture='./assets/wall_V2',
+	texture='./assets/wall_V3',
+	color=color.dark_gray,
 	collider='mesh',
 	scale=(100, 1, 100),
 	shader=lit_with_shadows_shader
@@ -61,7 +62,7 @@ player = FirstPersonController(
 
 wall1 = Entity(
 	model='cube',
-	texture='./assets/e_fryer.png',
+	texture='./assets/wall_wood_V2.png',
 	collider='cube',
 	scale=(100, 10, 5),
 	position=(0, 5, 50),
@@ -106,7 +107,6 @@ class Building(Button):
 		super().__init__(
 			parent=scene,
 			scale = 1.25,
-			color = color.gray,
 			disabled = True,
 			text_origin=(-0.5, -0.5, -.2),
 			text_color = color.light_gray,
@@ -203,13 +203,13 @@ pond = Building(
 	icon = './assets/pond.png'
 	)
 
-# def auto_generate_fryer1(value=1):
-# 	global doughnut
-# 	doughnut += value
-# 	counter.text = str(f'{doughnut} Doughnuts')
-# 	e_fryer.animate_scale(.125 * 1.1)
-# 	e_fryer.animate_scale(.124, delay=.2)
-	# invoke(auto_generate_fryer1, value, delay=interval)
+def auto_generate_fryer1(value=1, interval=4):
+	global doughnut
+	doughnut += value
+	counter.text = str(f'{doughnut} Doughnuts')
+	# self.animate_scale(.125 * 1.1)
+	# self.animate_scale(.124, delay=.2)
+	invoke(auto_generate_fryer1, value, delay=interval)
 
 # def buy_mw_emp():
 # 	global doughnut
@@ -237,21 +237,16 @@ pond = Building(
 def update():
 	global doughnut
 	for b in (e_fryer, mw_emp, trees, pond):
+		
 		if doughnut >= b.cost:
 			b.disabled = False
-			b.color = color.light_gray
 			b.text_color = color.white
 		else:
 			b.disabled = True
-			b.color = color.gray
 			b.text_color = color.light_gray
-	for b in (mw_emp, ):
-		if doughnut >= b.cost:
-			b.disabled = False
-			b.color = color.light_gray
-		else:
-			b.disabled = True
-			b.color = color.gray
+		if b.level > 0:
+			invoke(auto_generate_fryer1, 1, 1)
+			# invoke(cps, b, delay=5)
 
 
 wp = WindowPanel(
