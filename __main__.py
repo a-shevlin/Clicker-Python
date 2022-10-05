@@ -144,11 +144,15 @@ class Building(Button):
 					doughnut -= self.u_cost
 					self.amt += math.floor(self.amt * 2)
 					button.cps += self.amt
-					self.u_cost += math.floor(self.cost/2.5)
+					self.u_cost += math.floor((self.cost/2.5) * 3)
 					self.version += 1
 					counter.text = str(f'{doughnut} Doughnuts')
 					self.text = str(f'{self.cost} to buy\n\n\n\n\n{self.u_cost} to upgrade')
 					self.text_entity.world_scale = .4
+
+	# def test_loop(self):
+	# 	if self.level > 0:
+	# 		invoke(auto_generate_fryer1, 1, 1)
 
 #  
 
@@ -203,12 +207,12 @@ pond = Building(
 	icon = './assets/pond.png'
 	)
 
-def auto_generate_fryer1(value=1):
+def auto_generate(self, value):
 	global doughnut
 	doughnut += value
 	counter.text = str(f'{doughnut} Doughnuts')
-	# self.animate_scale(.125 * 1.1)
-	# self.animate_scale(.124, delay=.2)
+	self.animate_scale(.125 * 1.1)
+	self.animate_scale(.124, delay=.2)
 	# invoke(auto_generate_fryer1, 1, delay=5)
 
 # def buy_mw_emp():
@@ -236,8 +240,7 @@ def auto_generate_fryer1(value=1):
 
 def update():
 	global doughnut
-	if e_fryer.level > 0:
-			invoke(auto_generate_fryer1, 1, delay=5)
+	
 	for b in (e_fryer, mw_emp, trees, pond):
 		if doughnut >= b.cost:
 			b.disabled = False
@@ -245,7 +248,8 @@ def update():
 		else:
 			b.disabled = True
 			b.text_color = color.light_gray
-
+		if b.level > 0:
+			invoke(auto_generate, b,  b.amt, delay=b.speed)
 			# invoke(cps, b, delay=5)
 
 
@@ -283,7 +287,7 @@ def input(key):
 		wp.enabled = True
 		mouse = True
 
-		
+
 pivot = Entity()
 AmbientLight(parent=pivot, y=10, z=30, shadows=True)
 
