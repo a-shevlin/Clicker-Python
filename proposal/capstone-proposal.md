@@ -18,9 +18,12 @@ A fullstack application using that allows a user to:
 
 This project use Ursina for layout and styling. 
 
-### Stretch Goals
+### Completed
 
 * create .exe file to be user friendly
+* website to download game
+### Stretch Goals
+
 * color changing switch (light/dark)
 * soundtrack
 * options menu
