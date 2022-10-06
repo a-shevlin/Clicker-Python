@@ -234,7 +234,7 @@ def auto_generate(self):
 	global doughnut
 	doughnut += self.amt
 	counter.text = str(f'{doughnut} Doughnuts')
-	self.animate_scale(self.scale * 1.5)
+	# self.animate_scale(self.scale * 1.5)
 	self.animate_scale(self.scale, delay=.2)
 	# 
 
@@ -252,7 +252,7 @@ def update():
 			b.disabled = True
 			b.text_color = color.light_gray
 		if b.level > 0:
-			invoke(auto_generate, b,  b.amt, delay=b.speed)
+			invoke(auto_generate, b, delay=b.speed)
 			
 
 
@@ -277,6 +277,19 @@ def quitApp():
 	data2["e_fryer_level"] = e_fryer.level
 	data2["e_fryer_doughnuts"] = e_fryer.amt
 	data2["e_fryer_speed"] = e_fryer.speed
+	data2["mw_emp_fryer_price"] = mw_emp.cost
+	data2["mw_emp_level"] = mw_emp.level
+	data2["mw_emp_doughnuts"] = mw_emp.amt
+	data2["mw_emp_speed"] = mw_emp.speed
+	data2["trees_fryer_price"] = trees.cost
+	data2["trees_level"] = trees.level
+	data2["trees_doughnuts"] = trees.amt
+	data2["trees_speed"] = trees.speed
+	data2["pond_fryer_price"] = pond.cost
+	data2["pond_level"] = pond.level
+	data2["pond_doughnuts"] = pond.amt
+	data2["pond_speed"] = pond.speed
+
 	# data2["songplaying"] = songPlaying
 	# data2["sfxplaying"] = sfxPlaying
 	# data2["playedbefore"] = True
