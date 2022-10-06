@@ -1,10 +1,7 @@
 import json, sys
-from pyclbr import Function
-import schedule
 from ursina import *
 from ursina.shaders import lit_with_shadows_shader
 from ursina.prefabs.first_person_controller import FirstPersonController
-from time import time, sleep
 
 
 if not os.path.isdir("data/"):
@@ -182,12 +179,6 @@ class Building(Button):
 					self.text = str(f'{self.cost} to buy\n\n\n\n\n{self.u_cost} to upgrade')
 					self.text_entity.world_scale = .4
 
-	# def test_loop(self):
-	# 	if self.level > 0:
-	# 		invoke(auto_generate_fryer1, 1, 1)
-
-#  
-
 def cps(self):
 	while(self.level > 0):
 		global doughnut
@@ -262,7 +253,7 @@ def update():
 			b.text_color = color.light_gray
 		if b.level > 0:
 			invoke(auto_generate, b,  b.amt, delay=b.speed)
-			# invoke(cps, b, delay=5)
+			
 
 
 wp = WindowPanel(
@@ -290,7 +281,7 @@ def quitApp():
 	# data2["sfxplaying"] = sfxPlaying
 	# data2["playedbefore"] = True
 	json.dump(data2, open("data/data.json", "w"))
-	quit()
+	sys.exit()
 
 def input(key):
 	if key == 'escape':
