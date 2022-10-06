@@ -32,5 +32,3 @@ _This is a python game that allows a player to click on a doughnut to produce in
   - working on removing the pop-up by changing dependencies
 
 - mouse tied to window and alt-tab sometimes does not work
-
-## License
